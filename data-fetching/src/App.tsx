@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import './App.css'
+import { useFetch } from './hooks/useFetch';
 
 type Repository = {
   full_name: string;
@@ -7,23 +6,17 @@ type Repository = {
 }
 
 function App() {
-  const [repositories, setRepositories] = useState<Repository[]>([]);
-
-  useEffect(() => {
-    fetch('https://api.github.com/users/MatheusEdnei/repos')
-      .then(reponse => reponse.json())
-      .then(data => {
-        setRepositories(data);
-      });
-  }, []);
+  const { data: repositories, isFetching } = 
+    useFetch<Repository[]>('https://api.github.com/users/MatheusEdnei/repos')
   
   return (
     <ul>
-      {repositories.map(repo => {
+      { isFetching && <p>Carregando...</p>}
+      {repositories?.map(repositories => {
         return (
-          <li key={repo.full_name}>
-            <strong>{repo.full_name}</strong>
-            <p>{repo.description}</p>
+          <li key={repositories.full_name}>
+            <strong>{repositories.full_name}</strong>
+            <p>{repositories.description}</p>
           </li>
         )
       })}
